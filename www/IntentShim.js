@@ -1,9 +1,8 @@
-var argscheck = require('cordova/argscheck'),
-    channel = require('cordova/channel'),
-    utils = require('cordova/utils'),
-    exec = require('cordova/exec'),
-    cordova = require('cordova');
-
+var argscheck = require("cordova/argscheck"),
+    channel = require("cordova/channel"),
+    utils = require("cordova/utils"),
+    exec = require("cordova/exec"),
+    cordova = require("cordova");
 
 /**
  * This represents a thin shim layer over the Android Intent implementation
@@ -30,62 +29,67 @@ IntentShim.prototype.RESULT_CANCELED = 0; //  Activity.RESULT_CANCELED
 IntentShim.prototype.RESULT_OK = -1; //  Activity.RESULT_OK
 
 IntentShim.prototype.startActivity = function (params, successCallback, errorCallback) {
-    argscheck.checkArgs('off', 'IntentShim.startActivity', arguments);
+    argscheck.checkArgs("off", "IntentShim.startActivity", arguments);
     exec(successCallback, errorCallback, "IntentShim", "startActivity", [params]);
 };
 
 IntentShim.prototype.startActivityForResult = function (params, successCallback, errorCallback) {
-    argscheck.checkArgs('off', 'IntentShim.startActivityForResult', arguments);
+    argscheck.checkArgs("off", "IntentShim.startActivityForResult", arguments);
     exec(successCallback, errorCallback, "IntentShim", "startActivityForResult", [params]);
 };
 
 IntentShim.prototype.sendBroadcast = function (params, successCallback, errorCallback) {
-    argscheck.checkArgs('off', 'IntentShim.sendBroadcast', arguments);
+    argscheck.checkArgs("off", "IntentShim.sendBroadcast", arguments);
     exec(successCallback, errorCallback, "IntentShim", "sendBroadcast", [params]);
 };
 
 IntentShim.prototype.startService = function (params, successCallback, errorCallback) {
-    argscheck.checkArgs('off', 'IntentShim.startService', arguments);
+    argscheck.checkArgs("off", "IntentShim.startService", arguments);
     exec(successCallback, errorCallback, "IntentShim", "startService", [params]);
 };
 
 IntentShim.prototype.registerBroadcastReceiver = function (params, callback) {
-    argscheck.checkArgs('of', 'IntentShim.registerBroadcastReceiver', arguments);
+    argscheck.checkArgs("of", "IntentShim.registerBroadcastReceiver", arguments);
     exec(callback, null, "IntentShim", "registerBroadcastReceiver", [params]);
 };
 
 IntentShim.prototype.unregisterBroadcastReceiver = function () {
-    argscheck.checkArgs('', 'IntentShim.unregisterBroadcastReceiver', arguments);
+    argscheck.checkArgs("", "IntentShim.unregisterBroadcastReceiver", arguments);
     exec(null, null, "IntentShim", "unregisterBroadcastReceiver", []);
 };
 
 IntentShim.prototype.onIntent = function (callback) {
-    argscheck.checkArgs('f', 'IntentShim.onIntent', arguments);
+    argscheck.checkArgs("f", "IntentShim.onIntent", arguments);
     exec(callback, null, "IntentShim", "onIntent", [callback]);
 };
 
 IntentShim.prototype.onActivityResult = function (callback) {
-    argscheck.checkArgs('f', 'IntentShim.onActivityResult', arguments);
+    argscheck.checkArgs("f", "IntentShim.onActivityResult", arguments);
     exec(callback, null, "IntentShim", "onActivityResult", [callback]);
 };
 
 IntentShim.prototype.getIntent = function (successCallback, failureCallback) {
-    argscheck.checkArgs('ff', 'IntentShim.getIntent', arguments);
+    argscheck.checkArgs("ff", "IntentShim.getIntent", arguments);
     exec(successCallback, failureCallback, "IntentShim", "getIntent", []);
 };
 
 IntentShim.prototype.sendResult = function (params, callback) {
-    argscheck.checkArgs('of', 'IntentShim.sendResult', arguments);
+    argscheck.checkArgs("of", "IntentShim.sendResult", arguments);
     exec(callback, null, "IntentShim", "sendResult", [params]);
-}
+};
 
 IntentShim.prototype.realPathFromUri = function (params, successCallback, errorCallback) {
-    argscheck.checkArgs('off', 'IntentShim.realPathFromUri', arguments);
+    argscheck.checkArgs("off", "IntentShim.realPathFromUri", arguments);
     exec(successCallback, errorCallback, "IntentShim", "realPathFromUri", [params]);
 };
 
+IntentShim.prototype.myPathFromUri = function (params, successCallback, errorCallback) {
+    argscheck.checkArgs("off", "IntentShim.myPathFromUri", arguments);
+    exec(successCallback, errorCallback, "IntentShim", "myPathFromUri", [params]);
+};
+
 IntentShim.prototype.packageExists = function (packageName, successCallback) {
-    argscheck.checkArgs('sf', 'IntentShim.packageExists', arguments);
+    argscheck.checkArgs("sf", "IntentShim.packageExists", arguments);
     exec(successCallback, null, "IntentShim", "packageExists", [packageName]);
 };
 
