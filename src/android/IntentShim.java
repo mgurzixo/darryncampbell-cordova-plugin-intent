@@ -594,6 +594,9 @@ public class IntentShim extends CordovaPlugin {
 
         if (obj.has("chooser")) {
             i = Intent.createChooser(i, obj.getString("chooser"));
+            Log.i(LOG_TAG, "Using chooser");
+        } else {
+            Log.i(LOG_TAG, "Using NO chooser");
         }
 
         return i;
