@@ -156,11 +156,11 @@ IntentShim.prototype.onActivityResult = function (callback) {
 };
 
 IntentShim.prototype.getIntent = function (successCallback, failureCallback) {
-    console.log('[IntentShim.getIntent] called');
+    // console.log('[IntentShim.getIntent] called');
     argscheck.checkArgs("ff", "IntentShim.getIntent", arguments);
     exec(
         function() {
-            console.log('[IntentShim.getIntent] successCallback');
+            // console.log('[IntentShim.getIntent] successCallback');
             if (successCallback) successCallback.apply(null, arguments);
         },
         function(err) {

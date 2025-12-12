@@ -25,7 +25,7 @@ import androidx.core.content.FileProvider;
 
 import android.provider.OpenableColumns;
 import android.text.Html;
-import android.util.Log;
+// import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.MimeTypeMap;
 
@@ -57,7 +57,7 @@ public class IntentShim extends CordovaPlugin {
 
     private final Map<BroadcastReceiver, CallbackContext> receiverCallbacks = new HashMap<>();
 
-    private static final String LOG_TAG = "Cordova Intents Shim";
+    // private static final String LOG_TAG = "Cordova Intents Shim";
     private CallbackContext onNewIntentCallbackContext = null;
     private CallbackContext onActivityResultCallbackContext = null;
 
@@ -68,7 +68,7 @@ public class IntentShim extends CordovaPlugin {
     }
 
     public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        Log.d(LOG_TAG, "Action: " + action);
+        // Log.d(LOG_TAG, "Action: " + action);
         if (action.equals("startActivity") || action.equals("startActivityForResult")) {
             // Credit: https://github.com/chrisekelley/cordova-webintent
             if (args.length() != 1) {
@@ -113,8 +113,7 @@ public class IntentShim extends CordovaPlugin {
             callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
             return true;
         } else if (action.equals("registerBroadcastReceiver")) {
-            Log.d(LOG_TAG, "Plugin no longer unregisters receivers on registerBroadcastReceiver invocation");
-
+            // Log.d(LOG_TAG, "Plugin no longer unregisters receivers on registerBroadcastReceiver invocation");
             // No error callback
             if (args.length() != 1) {
                 callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
@@ -126,7 +125,6 @@ public class IntentShim extends CordovaPlugin {
             JSONArray filterActions = obj.has("filterActions") ? obj.getJSONArray("filterActions") : null;
             if (filterActions == null || filterActions.length() == 0) {
                 // The arguments are not correct
-                Log.w(LOG_TAG, "filterActions argument is not in the expected format");
                 callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
                 return false;
             }
@@ -136,7 +134,7 @@ public class IntentShim extends CordovaPlugin {
 
             IntentFilter filter = new IntentFilter();
             for (int i = 0; i < filterActions.length(); i++) {
-                Log.d(LOG_TAG, "Registering broadcast receiver for filter: " + filterActions.getString(i));
+                // Log.d(LOG_TAG, "Registering broadcast receiver for filter: " + filterActions.getString(i));
                 filter.addAction(filterActions.getString(i));
             }
 
@@ -144,8 +142,8 @@ public class IntentShim extends CordovaPlugin {
             JSONArray filterCategories = obj.has("filterCategories") ? obj.getJSONArray("filterCategories") : null;
             if (filterCategories != null) {
                 for (int i = 0; i < filterCategories.length(); i++) {
-                    Log.d(LOG_TAG,
-                            "Registering broadcast receiver for category filter: " + filterCategories.getString(i));
+                    // Log.d(LOG_TAG,
+                    //         "Registering broadcast receiver for category filter: " + filterCategories.getString(i));
                     filter.addCategory(filterCategories.getString(i));
                 }
             }
@@ -155,7 +153,7 @@ public class IntentShim extends CordovaPlugin {
             JSONArray filterDataSchemes = obj.has("filterDataSchemes") ? obj.getJSONArray("filterDataSchemes") : null;
             if (filterDataSchemes != null && filterDataSchemes.length() > 0) {
                 for (int i = 0; i < filterDataSchemes.length(); i++) {
-                    Log.d(LOG_TAG, "Associating data scheme to filter: " + filterDataSchemes.getString(i));
+                    // Log.d(LOG_TAG, "Associating data scheme to filter: " + filterDataSchemes.getString(i));
                     filter.addDataScheme(filterDataSchemes.getString(i));
                 }
             }
@@ -324,10 +322,10 @@ public class IntentShim extends CordovaPlugin {
     }
 
     private void unregisterAllBroadcastReceivers() {
-        Log.d(LOG_TAG, "Unregistering all broadcast receivers, size was " + receiverCallbacks.size());
         for (BroadcastReceiver broadcastReceiver : receiverCallbacks.keySet()) {
             this.cordova.getActivity().unregisterReceiver(broadcastReceiver);
         }
+        // Log.d(LOG_TAG, "Unregistering all broadcast receivers, size was " + receiverCallbacks.size());
         receiverCallbacks.clear();
     }
 
@@ -353,8 +351,6 @@ public class IntentShim extends CordovaPlugin {
                 File uriAsFile = new File(fileName);
                 boolean fileExists = uriAsFile.exists();
                 if (!fileExists) {
-                    Log.e(LOG_TAG, "File at path " + uriAsFile.getPath() + " with name " + uriAsFile.getName()
-                            + "does not exist");
                     callbackContext.error("File not found: " + uriAsFile.toString());
                     return null;
                 }
@@ -364,23 +360,22 @@ public class IntentShim extends CordovaPlugin {
                         uriAsFile);
                 return uri;
             } else {
-                Log.e(LOG_TAG,
-                        "Storage directory is not mounted.  Please ensure the device is not connected via USB for file transfer");
+                // Log.e(LOG_TAG,
+                //         "Storage directory is not mounted.  Please ensure the device is not connected via USB for file transfer");
                 callbackContext.error("Storage directory is returning not mounted");
                 return null;
             }
-        } catch (StringIndexOutOfBoundsException e) {
-            Log.e(LOG_TAG, "URL is not well formed");
-            callbackContext.error("URL is not well formed");
-            return null;
-        }
+            } catch (StringIndexOutOfBoundsException e) {
+                callbackContext.error("URL is not well formed");
+                return null;
+            }
     }
 
     private String myPathFromUri(JSONObject obj, CallbackContext callbackContext) throws JSONException {
         // Credit:https://stackoverflow.com/questions/5568874/how-to-extract-the-file-name-from-uri-returned-from-intent-action-get-content
         Uri uri = obj.has("uri") ? Uri.parse(obj.getString("uri")) : null;
         if (uri == null) {
-            Log.w(LOG_TAG, "URI is not a specified parameter");
+            // Log.w(LOG_TAG, "URI is not a specified parameter");
             throw new JSONException("URI is not a specified parameter");
         }
         String result = null;
@@ -410,7 +405,7 @@ public class IntentShim extends CordovaPlugin {
         // https://stackoverflow.com/questions/2789276/android-get-real-path-by-uri-getpath/2790688
         Uri uri = obj.has("uri") ? Uri.parse(obj.getString("uri")) : null;
         if (uri == null) {
-            Log.w(LOG_TAG, "URI is not a specified parameter");
+            // Log.w(LOG_TAG, "URI is not a specified parameter");
             throw new JSONException("URI is not a specified parameter");
         }
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
@@ -467,7 +462,6 @@ public class IntentShim extends CordovaPlugin {
 
     private void startActivity(Intent i, boolean bExpectResult, int requestCode, CallbackContext callbackContext) {
         String intentDescription = describeIntent(i);
-        // Log.d(LOG_TAG, "startActivity intent=" + intentDescription + " expectResult=" + bExpectResult + " requestCode=" + requestCode);
 
         if (i.resolveActivityInfo(this.cordova.getActivity().getPackageManager(), 0) != null) {
             try {
@@ -479,17 +473,13 @@ public class IntentShim extends CordovaPlugin {
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
                 }
             } catch (ActivityNotFoundException ex) {
-                // Log.e(LOG_TAG, "ActivityNotFoundException launching intent " + intentDescription, ex);
                 callbackContext.error("Activity not found: " + ex.getMessage() + " for intent " + intentDescription);
             } catch (SecurityException ex) {
-                // Log.e(LOG_TAG, "SecurityException launching intent " + intentDescription, ex);
                 callbackContext.error("Security exception: " + ex.getMessage() + " for intent " + intentDescription);
             } catch (Exception ex) {
-                // Log.e(LOG_TAG, "Exception launching intent " + intentDescription, ex);
                 callbackContext.error("Exception launching intent: " + ex.getMessage() + " for intent " + intentDescription);
             }
         } else {
-            // Log.w(LOG_TAG, "No activity to handle intent: " + intentDescription);
             callbackContext.error("No activity found for intent: " + intentDescription);
         }
     }
@@ -573,7 +563,7 @@ public class IntentShim extends CordovaPlugin {
             String componentPackage = component.has("package") ? component.getString("package") : null;
             String componentClass = component.has("class") ? component.getString("class") : null;
             if (componentPackage == null || componentClass == null) {
-                Log.w(LOG_TAG, "Component specified but missing corresponding package or class");
+                // Log.w(LOG_TAG, "Component specified but missing corresponding package or class");
                 throw new JSONException("Component specified but missing corresponding package or class");
             } else {
                 ComponentName componentName = new ComponentName(componentPackage, componentClass);
@@ -641,9 +631,9 @@ public class IntentShim extends CordovaPlugin {
 
         if (obj.has("chooser")) {
             i = Intent.createChooser(i, obj.getString("chooser"));
-            Log.i(LOG_TAG, "Using chooser");
+            // Log.i(LOG_TAG, "Using chooser");
         } else {
-            Log.i(LOG_TAG, "Using NO chooser");
+            // Log.i(LOG_TAG, "Using NO chooser");
         }
 
         return i;
@@ -744,9 +734,9 @@ public class IntentShim extends CordovaPlugin {
                         }
 
                     } catch (JSONException e) {
-                        Log.d(LOG_TAG, " Error thrown during intent > JSON conversion");
-                        Log.d(LOG_TAG, e.getMessage());
-                        Log.d(LOG_TAG, Arrays.toString(e.getStackTrace()));
+                        // Log.d(LOG_TAG, " Error thrown during intent > JSON conversion");
+                        // Log.d(LOG_TAG, e.getMessage());
+                        // Log.d(LOG_TAG, Arrays.toString(e.getStackTrace()));
                     }
 
                 }
@@ -773,10 +763,9 @@ public class IntentShim extends CordovaPlugin {
 
             return intentJSON;
         } catch (JSONException e) {
-            Log.d(LOG_TAG, " Error thrown during intent > JSON conversion");
-            Log.d(LOG_TAG, e.getMessage());
-            Log.d(LOG_TAG, Arrays.toString(e.getStackTrace()));
-
+            // Log.d(LOG_TAG, " Error thrown during intent > JSON conversion");
+            // Log.d(LOG_TAG, e.getMessage());
+            // Log.d(LOG_TAG, Arrays.toString(e.getStackTrace()));
             return null;
         }
     }
