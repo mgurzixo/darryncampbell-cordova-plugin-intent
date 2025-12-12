@@ -2,6 +2,7 @@ package com.darryncampbell.cordova.plugin.intent;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ComponentName;
@@ -10,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -296,6 +298,26 @@ public class IntentShim extends CordovaPlugin {
                 callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, false));
                 return true;
             }
+        } else if (action.equals("queryIntentActivities")) {
+            if (args.length() != 1) {
+                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
+                return false;
+            }
+            JSONObject obj = args.getJSONObject(0);
+            Intent intent = populateIntent(obj, callbackContext);
+            PackageManager packageManager = this.cordova.getActivity().getPackageManager();
+            List<ResolveInfo> resolveInfos = packageManager.queryIntentActivities(intent, PackageManager.MATCH_ALL);
+            JSONArray result = new JSONArray();
+            for (ResolveInfo info : resolveInfos) {
+                JSONObject entry = new JSONObject();
+                entry.put("packageName", info.activityInfo.packageName);
+                entry.put("name", info.activityInfo.name);
+                CharSequence label = info.loadLabel(packageManager);
+                if (label != null) entry.put("label", label.toString());
+                result.put(entry);
+            }
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, result));
+            return true;
         }
 
         return true;
@@ -444,19 +466,44 @@ public class IntentShim extends CordovaPlugin {
     }
 
     private void startActivity(Intent i, boolean bExpectResult, int requestCode, CallbackContext callbackContext) {
+        String intentDescription = describeIntent(i);
+        // Log.d(LOG_TAG, "startActivity intent=" + intentDescription + " expectResult=" + bExpectResult + " requestCode=" + requestCode);
 
         if (i.resolveActivityInfo(this.cordova.getActivity().getPackageManager(), 0) != null) {
-            if (bExpectResult) {
-                cordova.setActivityResultCallback(this);
-                this.cordova.getActivity().startActivityForResult(i, requestCode);
-            } else {
-                this.cordova.getActivity().startActivity(i);
-                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+            try {
+                if (bExpectResult) {
+                    cordova.setActivityResultCallback(this);
+                    this.cordova.getActivity().startActivityForResult(i, requestCode);
+                } else {
+                    this.cordova.getActivity().startActivity(i);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+                }
+            } catch (ActivityNotFoundException ex) {
+                // Log.e(LOG_TAG, "ActivityNotFoundException launching intent " + intentDescription, ex);
+                callbackContext.error("Activity not found: " + ex.getMessage() + " for intent " + intentDescription);
+            } catch (SecurityException ex) {
+                // Log.e(LOG_TAG, "SecurityException launching intent " + intentDescription, ex);
+                callbackContext.error("Security exception: " + ex.getMessage() + " for intent " + intentDescription);
+            } catch (Exception ex) {
+                // Log.e(LOG_TAG, "Exception launching intent " + intentDescription, ex);
+                callbackContext.error("Exception launching intent: " + ex.getMessage() + " for intent " + intentDescription);
             }
         } else {
-            // Return an error as there is no app to handle this intent
-            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR));
+            // Log.w(LOG_TAG, "No activity to handle intent: " + intentDescription);
+            callbackContext.error("No activity found for intent: " + intentDescription);
         }
+    }
+
+    private String describeIntent(Intent intent) {
+        if (intent == null) {
+            return "<null>";
+        }
+        String action = intent.getAction() != null ? intent.getAction() : "<no-action>";
+        String data = intent.getDataString() != null ? intent.getDataString() : "<no-data>";
+        String pkg = intent.getPackage() != null ? intent.getPackage() : "<no-package>";
+        String component = intent.getComponent() != null ? intent.getComponent().flattenToShortString() : "<no-component>";
+        String extras = intent.getExtras() != null ? intent.getExtras().toString() : "<no-extras>";
+        return "action=" + action + " data=" + data + " package=" + pkg + " component=" + component + " extras=" + extras;
     }
 
     private void sendBroadcast(Intent intent) {
