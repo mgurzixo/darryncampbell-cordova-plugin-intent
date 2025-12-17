@@ -31,7 +31,7 @@ IntentShim.prototype.RESULT_CANCELED = 0; //  Activity.RESULT_CANCELED
 IntentShim.prototype.RESULT_OK = -1; //  Activity.RESULT_OK
 
 IntentShim.prototype.startActivity = function (params, successCallback, errorCallback) {
-    console.log('[IntentShim.startActivity] called with params:', params);
+    // console.log('[IntentShim.startActivity] called with params:', params);
     argscheck.checkArgs("off", "IntentShim.startActivity", arguments);
     exec(
         function() {
@@ -47,7 +47,7 @@ IntentShim.prototype.startActivity = function (params, successCallback, errorCal
 };
 
 IntentShim.prototype.startActivityForResult = function (params, successCallback, errorCallback) {
-    console.log('[IntentShim.startActivityForResult] called with params:', params);
+    // console.log('[IntentShim.startActivityForResult] called with params:', params);
     argscheck.checkArgs("off", "IntentShim.startActivityForResult", arguments);
     exec(
         function() {
@@ -63,7 +63,7 @@ IntentShim.prototype.startActivityForResult = function (params, successCallback,
 };
 
 IntentShim.prototype.sendBroadcast = function (params, successCallback, errorCallback) {
-    console.log('[IntentShim.sendBroadcast] called with params:', params);
+    // console.log('[IntentShim.sendBroadcast] called with params:', params);
     argscheck.checkArgs("off", "IntentShim.sendBroadcast", arguments);
     exec(
         function() {
@@ -79,7 +79,7 @@ IntentShim.prototype.sendBroadcast = function (params, successCallback, errorCal
 };
 
 IntentShim.prototype.startService = function (params, successCallback, errorCallback) {
-    console.log('[IntentShim.startService] called with params:', params);
+    // console.log('[IntentShim.startService] called with params:', params);
     argscheck.checkArgs("off", "IntentShim.startService", arguments);
     exec(
         function() {
@@ -111,7 +111,7 @@ IntentShim.prototype.queryIntentActivities = function (params, successCallback, 
 };
 
 IntentShim.prototype.registerBroadcastReceiver = function (params, callback) {
-    console.log('[IntentShim.registerBroadcastReceiver] called with params:', params);
+    // console.log('[IntentShim.registerBroadcastReceiver] called with params:', params);
     argscheck.checkArgs("of", "IntentShim.registerBroadcastReceiver", arguments);
     exec(
         function() {
@@ -124,13 +124,13 @@ IntentShim.prototype.registerBroadcastReceiver = function (params, callback) {
 };
 
 IntentShim.prototype.unregisterBroadcastReceiver = function () {
-    console.log('[IntentShim.unregisterBroadcastReceiver] called');
+    // console.log('[IntentShim.unregisterBroadcastReceiver] called');
     argscheck.checkArgs("", "IntentShim.unregisterBroadcastReceiver", arguments);
     exec(null, null, "IntentShim", "unregisterBroadcastReceiver", []);
 };
 
 IntentShim.prototype.onIntent = function (callback) {
-    console.log('[IntentShim.onIntent] called');
+    // console.log('[IntentShim.onIntent] called');
     argscheck.checkArgs("f", "IntentShim.onIntent", arguments);
     exec(
         function() {
@@ -143,7 +143,7 @@ IntentShim.prototype.onIntent = function (callback) {
 };
 
 IntentShim.prototype.onActivityResult = function (callback) {
-    console.log('[IntentShim.onActivityResult] called');
+    // console.log('[IntentShim.onActivityResult] called');
     argscheck.checkArgs("f", "IntentShim.onActivityResult", arguments);
     exec(
         function() {
@@ -172,7 +172,7 @@ IntentShim.prototype.getIntent = function (successCallback, failureCallback) {
 };
 
 IntentShim.prototype.sendResult = function (params, callback) {
-    console.log('[IntentShim.sendResult] called with params:', params);
+    // console.log('[IntentShim.sendResult] called with params:', params);
     argscheck.checkArgs("of", "IntentShim.sendResult", arguments);
     exec(
         function() {
@@ -185,7 +185,7 @@ IntentShim.prototype.sendResult = function (params, callback) {
 };
 
 IntentShim.prototype.realPathFromUri = function (params, successCallback, errorCallback) {
-    console.log('[IntentShim.realPathFromUri] called with params:', params);
+    // console.log('[IntentShim.realPathFromUri] called with params:', params);
     argscheck.checkArgs("off", "IntentShim.realPathFromUri", arguments);
     exec(
         function() {
@@ -200,8 +200,24 @@ IntentShim.prototype.realPathFromUri = function (params, successCallback, errorC
     );
 };
 
+IntentShim.prototype.extractGpsFromFile = function (params, successCallback, errorCallback) {
+    // console.log('[IntentShim.extractGpsFromFile] called with params:', params);
+    argscheck.checkArgs("off", "IntentShim.extractGpsFromFile", arguments);
+    exec(
+        function() {
+            // console.log('[IntentShim.extractGpsFromFile] successCallback');
+            if (successCallback) successCallback.apply(null, arguments);
+        },
+        function(err) {
+            console.log('[IntentShim.extractGpsFromFile] errorCallback:', err);
+            if (errorCallback) errorCallback.apply(null, arguments);
+        },
+        "IntentShim", "extractGpsFromFile", [params]
+    );
+};
+
 IntentShim.prototype.myPathFromUri = function (params, successCallback, errorCallback) {
-    console.log('[IntentShim.myPathFromUri] called with params:', params);
+    // console.log('[IntentShim.myPathFromUri] called with params:', params);
     argscheck.checkArgs("off", "IntentShim.myPathFromUri", arguments);
     exec(
         function() {
@@ -217,7 +233,7 @@ IntentShim.prototype.myPathFromUri = function (params, successCallback, errorCal
 };
 
 IntentShim.prototype.packageExists = function (packageName, successCallback) {
-    console.log('[IntentShim.packageExists] called with packageName:', packageName);
+    // console.log('[IntentShim.packageExists] called with packageName:', packageName);
     argscheck.checkArgs("sf", "IntentShim.packageExists", arguments);
     exec(
         function() {

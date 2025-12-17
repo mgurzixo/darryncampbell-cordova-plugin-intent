@@ -28,6 +28,10 @@ import android.text.Html;
 // import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.MimeTypeMap;
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.lang.GeoLocation;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.GpsDirectory;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaActivity;
@@ -270,6 +274,47 @@ public class IntentShim extends CordovaPlugin {
             callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, realPath));
             return true;
 
+        } else if (action.equals("extractGpsFromFile")) {
+            if (args.length() != 1) {
+                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
+                return false;
+            }
+
+            JSONObject obj = args.getJSONObject(0);
+            if (!obj.has("filePath")) {
+                callbackContext.error("extractGpsFromFile missing filePath");
+                return false;
+            }
+
+            String filePath = obj.getString("filePath");
+            File jpegFile = new File(filePath);
+            if (!jpegFile.exists()) {
+                callbackContext.error("File not found: " + filePath);
+                return false;
+            }
+
+            try {
+                Metadata metadata = ImageMetadataReader.readMetadata(jpegFile);
+                GpsDirectory gpsDirectory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+                JSONObject gpsData = new JSONObject();
+                if (gpsDirectory != null) {
+                    GeoLocation location = gpsDirectory.getGeoLocation();
+                    if (location != null && !location.isZero()) {
+                        gpsData.put("latitude", location.getLatitude());
+                        gpsData.put("longitude", location.getLongitude());
+                        if (gpsDirectory.containsTag(GpsDirectory.TAG_ALTITUDE)) {
+                            gpsData.put("altitude", gpsDirectory.getDouble(GpsDirectory.TAG_ALTITUDE));
+                        }
+                    }
+                }
+                JSONObject result = new JSONObject();
+                result.put("gps", gpsData);
+                result.put("metadata", metadata.toString());
+                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, result));
+            } catch (Exception e) {
+                callbackContext.error("extractGpsFromFile error: " + e.getMessage());
+            }
+            return true;
         } else if (action.equals("myPathFromUri")) {
             if (args.length() != 1) {
                 callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));

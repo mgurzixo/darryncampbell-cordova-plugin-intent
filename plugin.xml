@@ -42,6 +42,8 @@
         <source-file src="src/android/CordovaPluginIntentFileProvider.java" target-dir="src/com/darryncampbell/plugin/intent" />
 		<resource-file src="src/android/res/xml/provider_paths.xml" target="res/xml/provider_paths.xml"/>
 		<framework src="androidx.core:core:1.1.0" />
+        <framework src="com.drewnoakes:metadata-extractor:2.19.0" />
+        <framework src="com.adobe.xmp:xmpcore:6.1.10" />
     </platform>
 	
 </plugin>
